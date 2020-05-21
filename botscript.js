@@ -299,7 +299,7 @@ client.on('message', msg => {
                                 });
                             }
                             else {
-                                msg.channel.send('Vérifiez la syntaxe de votre commande (?removeimg ou ?rimg <n° de l\'imade>');
+                                msg.channel.send('Vérifiez la syntaxe de votre commande (?removeimg ou ?rimg <n° de l\'image>');
                             }
                         }
                         
@@ -551,35 +551,47 @@ client.on('message', msg => {
                     
                     if (Commandes.includes(nameCMD)) {
                         const subTab = Tab.slice(Tab.indexOf(nameCMD) + 1,Tab.indexOf('|'+nameCMD)-1);
-                        if(subTab.length <= 10){
-                            for (let i = 0; i < INDEXimages.length; i++) {
+                        
+                        for (let i = 0; i < INDEXimages.length && i !== 100; i++) {
+                            if(subTab.length < 10){
                                 if (urls.includes(urls[INDEXimages[i] - 1])) {
                                     results = results + nicknames[INDEXimages[i] - 1] + ' - ';
                                     Tab.splice(Tab.indexOf(nameCMD) + 1, 0, nicknames[INDEXimages[i] - 1] + '|' + nameCMD);
+                                    INDEXimages.splice(i,1," ");
                                 }
                                 else {
-                                    error = error + 'image n°' + INDEXimages[i] + ', ';
+                                    error = error + 'image n° ' + INDEXimages[i] + ', ';
                                     errors++;
                                 }
                             }
-                            msg.channel.send(results);
-                            if (errors === 0) {
-                                error += 'aucune';
+                            else{
+                                    msg.channel.send('Le maximum d\'images pour cette commande est déjà atteint (max: 10)');
+                                    INDEXimages.forEach( x => {
+                                        if(x !== " "){
+                                            error = error + 'image n° ' + x + ', ';
+                                        }
+                                    })
+                                    errors++;
+                                    i = 100;
                             }
-                            msg.channel.send(error);
-                            if (compa) {
-                                client.mongoose.update(msg.guild.id, nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role);
-                                console.log('update');
-                            }
-                            else {
-                                client.mongoose.sauve(nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role, msg.guild.id);
-                                console.log('save');
-                            }
+                        }
+
+                        msg.channel.send(results);
+                        if (errors === 0) {
+                            error += 'aucune';
+                        }
+                        msg.channel.send(error);
+                        if (compa) {
+                            client.mongoose.update(msg.guild.id, nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role);
+                            console.log('update');
+                        }
+                        else {
+                            client.mongoose.sauve(nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role, msg.guild.id);
+                            console.log('save');
                         }
                         
-                        else{
-                            msg.channel.send('Le maximum d\'images pour cette commande est déjà atteint (max: 10)');
-                        }
+                        
+                       
                     }
                     else {
                         msg.channel.send('Cette commande n\'est pas dans liste');
