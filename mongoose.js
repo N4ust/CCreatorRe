@@ -21,17 +21,16 @@ module.exports = {
         const dbOptions = {
             useUnifiedTopology: true,
             useNewUrlParser: true,
+            useFindandModify: false,
             autoIndex: false,
-            poolSize: 5,
-            connectTimeoutMS: 10000,
             family: 4,
         };
 
-        let uri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/Database';
+        let MONGODB_URI = process.env.MONGODB_URL || "mongodb://localhost/Database";
+
+        mongoose.connect(MONGODB_URI,dbOptions);
+
         
-        mongoose.connect(uri, dbOptions);
-        mongoose.set('useFindAndModify', false);
-        mongoose.set('useUnifiedTopology',true);
         mongoose.Promise = global.Promise;
 
         mongoose.connection.on('connected', () => {
