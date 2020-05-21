@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+
+
 var Schema = new mongoose.Schema({
     nicknames: Array,
     urls: Array,
@@ -25,7 +27,9 @@ module.exports = {
             family: 4,
         };
 
-        mongoose.connect('mongodb://localhost:27017/Database', dbOptions);
+        let uri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/Database';
+        
+        mongoose.connect(uri, dbOptions);
         mongoose.set('useFindAndModify', false);
         mongoose.set('useUnifiedTopology',true);
         mongoose.Promise = global.Promise;
