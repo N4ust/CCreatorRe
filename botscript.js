@@ -321,7 +321,7 @@ client.on('message', msg => {
                 
                 if (msg.content.startsWith(prefix + 'view')) {
                     const Message = msg.content.split(' ');
-                    let Image = new Discord.RichEmbed().setColor('#A3E4D7');
+                    let Image = new Discord.RichEmbed().setColor('#A3E4D7').setFooter("view").setTimestamp(new Date());
                     let index = Message[1];
                     if (urls.length > 0) {
                         if (nicknames.includes(index)) {
@@ -335,16 +335,14 @@ client.on('message', msg => {
                             let rdm = Math.floor(Math.random() * (urls.length - 1 - 0 + 1)) + 0;
                             Image.setImage(urls[rdm]);
                             Image.setTitle('__Image aléatoire demandée par ' + msg.author.username + '__');
-                            console.log(Image);
+                            
                             msg.channel.send(Image);
                             console.log('Postée !rdm');
                         }
                         
                         else if (Number(index) >= 0 && Number(index) <= urls.length) {
                             Image.setTitle('__Image n° ' + index + ' demandée par ' + msg.author.username + '__');
-                            const test = urls[index-1].slice(0,urls[index-1].indexOf('.png'));
-                            Image.attachFile({attachment: test.png});
-                            console.log(Image);
+                            Image.setImage(urls[Number(index)]);
                             msg.channel.send(Image);
                             console.log('Postée !index');
                             
@@ -614,6 +612,9 @@ client.on('message', msg => {
                         if (Message[i].startsWith('<@')) {
                             Ping.push(Message[i].slice(2, Message[i].indexOf('>')));
                         }
+                        else{
+                            Ping.push(Message[i])
+                        }
                     }
                     if (BotCommandes.includes(cmd)) { }
                     
@@ -634,6 +635,9 @@ client.on('message', msg => {
                                 if (msg.mentions.users.array().length >= 1) {
                                     Title += msg.guild.members.get(Ping[0]).user.username;
                                 }
+                                else if (Ping.length >= 1){
+                                    Title += Ping[0];
+                                }
                                 else {
                                     Title += 'CCreator';
                                 }
@@ -641,6 +645,9 @@ client.on('message', msg => {
                             else if (SubMessage[i] === 'target2') {
                                 if (msg.mentions.users.array().length >= 2) {
                                     Title += msg.guild.members.get(Ping[1]).user.username;
+                                }
+                                else if (Ping.length >= 2){
+                                    Title += Ping[1];
                                 }
                                 else {
                                     Title += 'CCreator';
@@ -657,7 +664,7 @@ client.on('message', msg => {
                         CommandePerso.setColor('#A3E4D7');
                         CommandePerso.setFooter(cmd);
                         CommandePerso.setTimestamp(new Date());
-                        console.log(CommandePerso);
+                    
                         msg.channel.send(CommandePerso);
                     }
                     else {
