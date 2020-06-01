@@ -424,7 +424,7 @@ client.on('message', msg => {
                             
                             for (let r = 0; r < 5; r++) {
                                 let positionn = r + 1;
-                                if(Commandes[i] === undefined){
+                                if(Commandes[r] === undefined){
                                     EmbedCommands.addField('Commande n°' + positionn, "Aucune");
                                 }
                                 else{
