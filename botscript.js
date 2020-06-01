@@ -164,7 +164,7 @@ client.on('message', msg => {
                                 msg.channel.send(list);
                             }
                             
-                            if (Number(nameC) <= rnd && Math.ceil(Number(nameC)) == Number(nameC)){
+                            if (Number(nameC) <= rnd && Math.ceil(Number(nameC)) === Number(nameC)){
                                 let b = (Number(nameC)-1)*5;
                                 for (let i = b;i < b+5;i++){
                                     var position = i + 1;
@@ -175,7 +175,7 @@ client.on('message', msg => {
                                         list.addField('Image n°' + position, nicknames[i]);
                                     }
                                 } 
-                                list.setFooter('Liste-   Page'+nameC+'/'+rnd);
+                                list.setFooter('Liste-   Page '+nameC+'/'+rnd);
                                 list.setTimestamp(new Date());
                                 msg.channel.send(list);
                             }
@@ -424,22 +424,27 @@ client.on('message', msg => {
                             
                             for (let r = 0; r < 5; r++) {
                                 let positionn = r + 1;
-                                EmbedCommands.addField('Commande n°' + positionn, Commandes[r]);
+                                if(Commandes[i] === undefined){
+                                    EmbedCommands.addField('Commande n°' + positionn, "Aucune");
+                                }
+                                else{
+                                    EmbedCommands.addField('Commande n°' + positionn, Commandes[r]);
+                                }
                             }
                             EmbedCommands.setFooter('Liste-   Page 1/'+rnd);
                             EmbedCommands.setTimestamp(new Date());
                             msg.channel.send(EmbedCommands);
                         }
-                        else if (Number(Message[1]) <= rnd && Math.ceil(Number(Message[1])) == Number(Message[1])){
+                        else if (Number(Message[1]) <= rnd && Math.ceil(Number(Message[1])) === Number(Message[1])){
                             let b = (Number(Message[1])-1)*5;
                             
                             for (let i = b;i < b+5;i++){
-                                var position = i + 1;
+                                var positiom = i + 1;
                                 if(Commandes[i] === undefined){
-                                    EmbedCommands.addField('Commande n°' + position, "Aucune");
+                                    EmbedCommands.addField('Commande n°' + positiom, "Aucune");
                                 }
                                 else{
-                                    EmbedCommands.addField('Commande n°' + position, Commandes[i]);
+                                    EmbedCommands.addField('Commande n°' + positiom, Commandes[i]);
                                 }
                             } 
                             EmbedCommands.setFooter('Liste-   Page'+Message[1]+'/'+rnd);
@@ -563,17 +568,17 @@ client.on('message', msg => {
                                 }
                             }
                             else{
-                                    msg.channel.send('Le maximum d\'images pour cette commande est déjà atteint (max: 10)');
-                                    INDEXimages.forEach( x => {
-                                        if(x !== " "){
-                                            error = error + 'image n° ' + x + ', ';
-                                        }
-                                    })
-                                    errors++;
-                                    i = 100;
+                                msg.channel.send('Le maximum d\'images pour cette commande est déjà atteint (max: 10)');
+                                INDEXimages.forEach( x => {
+                                    if(x !== " "){
+                                        error = error + 'image n° ' + x + ', ';
+                                    }
+                                })
+                                errors++;
+                                i = 100;
                             }
                         }
-
+                        
                         msg.channel.send(results);
                         if (errors === 0) {
                             error += 'aucune';
@@ -589,7 +594,7 @@ client.on('message', msg => {
                         }
                         
                         
-                       
+                        
                     }
                     else {
                         msg.channel.send('Cette commande n\'est pas dans liste');
@@ -664,7 +669,7 @@ client.on('message', msg => {
                         CommandePerso.setColor('#A3E4D7');
                         CommandePerso.setFooter(cmd);
                         CommandePerso.setTimestamp(new Date());
-                    
+                        
                         msg.channel.send(CommandePerso);
                     }
                     else {
