@@ -934,7 +934,22 @@ client.on('message', msg => {
                 
                 //_____________________________________________________________________________________________________
                 
-                
+                if(msg.content.startsWith(prefix + "tuto")){
+                    const Tuto = new Discord.RichEmbed()
+                        .setTitle("__Comment créer une commande avec le bot CCreator__")
+                        .setFooter("Tuto")
+                        .setTimestamp(new Date())
+                        .setThumbnail(client.user.avatarURL)
+                        .setColor('#A3E4D7')
+                        .addField("__Page d'aide__", "Utilisez "+ prefix +"help <nom de commande> (sans les crochets) pour avoir plus d'informations sur les commandes citées dans cette page")
+                        .addField("**1ère étape :**","Ajoutez une commande à la liste de commandes avec la commande " + prefix +"addc")
+                        .addField("**2e étape :**","Ajoutez des images/gifs à la liste d'images du serveur avec la commande "+ prefix + "addimg")
+                        .addField("**3e étape :**","Sélectionnez les images à utiliser pour votre commande avec la commande "+ prefix + "selectfor")
+                        .addField("**Dernière étape :**","Ajoutez une description à votre commande (ex: author fait un câlin à target1) avec la commande "+ prefix +"setDescription");
+                        msg.channel.send(Tuto);
+                }
+
+                //_____________________________________________________________________________________________________
                 
                 if (msg.content.startsWith(prefix + 'help')) {
                     const Message = msg.content.split(' ');
@@ -947,6 +962,7 @@ client.on('message', msg => {
                         .addField('__Afficher les listes__', '`listimg`,`listc/listcommand`')
                         .addField('__Paramétrage des commandes__', '`selectfor`,`clearfor`,`setDescription/setD`')
                         .addField('__Paramétrage du bot__', '`role`,`prefix`')
+                        .addField('__Créer une commande__','`tuto`')
                         .setThumbnail(client.user.avatarURL)
                         .setColor('#A3E4D7')
                         .setFooter('Help')
@@ -1015,7 +1031,7 @@ client.on('message', msg => {
                                 case 'setD':
                                 case 'setDescription':
                                 HelpCMD.addField('__Description__:', "Détermine la description de la commande spécifiée")
-                                .addField('__Utilisation__:', "=> " + prefix + "setD/setDescription <nom de commande> <description>\n\n**Note**:\n=> la première personne mentionnée correspond à 'target1'\n=> la deuxième personne mentionnée correspond à 'target2'\n=> la personne qui utilise la commande correspond à 'author'");
+                                .addField('__Utilisation__:', "=> " + prefix + "setD/setDescription <nom de commande> <description>\n\n**Note**:\n=> la première personne mentionnée correspond à 'target1'\n=> la deuxième personne mentionnée correspond à 'target2'\n=> la personne qui utilise la commande correspond à 'author'\n=>exemple: 'author fait un câlin à target1' donnera "+msg.author.username+" fait un câlin à CCreator, si la commande est "+ prefix +"hug @CCreator");
                                 msg.channel.send(HelpCMD);
                                 break;
                                 case 'role':
@@ -1028,6 +1044,9 @@ client.on('message', msg => {
                                 .addField('__Utilisation__:', "=> " + prefix + "prefix <nouveau préfixe>");
                                 msg.channel.send(HelpCMD);
                                 break;
+                                case 'tuto':
+                                HelpCMD.addField('__Description__:', "Affiche une page d'aide expliquant comment créer une commande")
+                                msg.channel.send(HelpCMD);
                                 default:
                                 break;
                             }
