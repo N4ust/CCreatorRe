@@ -7,7 +7,7 @@ client.mongoose.init();
 
 
 
-const BotCommandes = ['addimg', 'listimg', 'removeimg', 'rimg', 'view', 'addc', 'addcommand', 'listc', 'listcommand', 'selectfor', 'removec', 'removecommand', 'rc', 'setD', 'setDescription', 'role', 'clear', 'clearfor', 'help', 'prefix', 'allow'];
+const BotCommandes = ['addimg', 'listimg', 'removeimg', 'rimg', 'view', 'addc', 'addcommand', 'listc', 'listcommand', 'selectfor', 'removec', 'removecommand', 'tuto', 'setD', 'setDescription', 'role', 'clear', 'clearfor', 'help', 'prefix', 'allow'];
 
 
 client.on('ready', () => {
