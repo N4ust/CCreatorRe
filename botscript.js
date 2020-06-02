@@ -544,61 +544,67 @@ client.on('message', msg => {
                 
                 
                 if (msg.content.startsWith(prefix + 'selectfor')) {
-                    const Message = msg.content.split(' ');
-                    let nameCMD = Message[1];
-                    const INDEXimages = Message[2].split(',');
-                    let results = '-Images ajoutées à ' + nameCMD + ':  ';
-                    let error = '-Images n\'ayant pas été ajoutées à ' + nameCMD + ':  ';
-                    let errors = 0;
-                    
-                    
-                    if (Commandes.includes(nameCMD)) {
-                        const subTab = Tab.slice(Tab.indexOf(nameCMD) + 1,Tab.indexOf('|'+nameCMD)-1);
+                    if (msg.member.highestRole.permissions >= msg.guild.roles.get(Role).permissions || Allow.includes(msg.member.id)) {
+                        const Message = msg.content.split(' ');
+                        let nameCMD = Message[1];
+                        const INDEXimages = Message[2].split(',');
+                        let results = '-Images ajoutées à ' + nameCMD + ':  ';
+                        let error = '-Images n\'ayant pas été ajoutées à ' + nameCMD + ':  ';
+                        let errors = 0;
                         
-                        for (let i = 0; i < INDEXimages.length && i !== 100; i++) {
-                            if(subTab.length < 10){
-                                if (urls.includes(urls[INDEXimages[i] - 1])) {
-                                    results = results + nicknames[INDEXimages[i] - 1] + ' - ';
-                                    Tab.splice(Tab.indexOf(nameCMD) + 1, 0, nicknames[INDEXimages[i] - 1] + '|' + nameCMD);
-                                    INDEXimages.splice(i,1," ");
-                                }
-                                else {
-                                    error = error + 'image n° ' + INDEXimages[i] + ', ';
-                                    errors++;
-                                }
-                            }
-                            else{
-                                msg.channel.send('Le maximum d\'images pour cette commande est déjà atteint (max: 10)');
-                                INDEXimages.forEach( x => {
-                                    if(x !== " "){
-                                        error = error + 'image n° ' + x + ', ';
+                        
+                        if (Commandes.includes(nameCMD)) {
+                            const subTab = Tab.slice(Tab.indexOf(nameCMD) + 1,Tab.indexOf('|'+nameCMD)-1);
+                            
+                            for (let i = 0; i < INDEXimages.length && i !== 100; i++) {
+                                if(subTab.length < 10){
+                                    if (urls.includes(urls[INDEXimages[i] - 1])) {
+                                        results = results + nicknames[INDEXimages[i] - 1] + ' - ';
+                                        Tab.splice(Tab.indexOf(nameCMD) + 1, 0, nicknames[INDEXimages[i] - 1] + '|' + nameCMD);
+                                        INDEXimages.splice(i,1," ");
                                     }
-                                })
-                                errors++;
-                                i = 100;
+                                    else {
+                                        error = error + 'image n° ' + INDEXimages[i] + ', ';
+                                        errors++;
+                                    }
+                                }
+                                else{
+                                    msg.channel.send('Le maximum d\'images pour cette commande est déjà atteint (max: 10)');
+                                    INDEXimages.forEach( x => {
+                                        if(x !== " "){
+                                            error = error + 'image n° ' + x + ', ';
+                                        }
+                                    })
+                                    errors++;
+                                    i = 100;
+                                }
                             }
-                        }
-                        
-                        msg.channel.send(results);
-                        if (errors === 0) {
-                            error += 'aucune';
-                        }
-                        msg.channel.send(error);
-                        if (compa) {
-                            client.mongoose.update(msg.guild.id, nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role);
-                            console.log('update');
+                            
+                            msg.channel.send(results);
+                            if (errors === 0) {
+                                error += 'aucune';
+                            }
+                            msg.channel.send(error);
+                            if (compa) {
+                                client.mongoose.update(msg.guild.id, nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role);
+                                console.log('update');
+                            }
+                            else {
+                                client.mongoose.sauve(nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role, msg.guild.id);
+                                console.log('save');
+                            }
+                            
+                            
+                            
                         }
                         else {
-                            client.mongoose.sauve(nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role, msg.guild.id);
-                            console.log('save');
+                            msg.channel.send('Cette commande n\'est pas dans liste');
                         }
-                        
-                        
-                        
                     }
                     else {
-                        msg.channel.send('Cette commande n\'est pas dans liste');
+                        msg.reply("Tu n'as pas les permissions nécessaires");
                     }
+                    
                     
                 }
                 
@@ -623,7 +629,7 @@ client.on('message', msg => {
                     }
                     if (BotCommandes.includes(cmd)) { }
                     
-                    else if (Commandes.includes(cmd)) {
+                    else if (Commandes.includes(cmd) && Message.length >= 1) {
                         const CommandePerso = new Discord.RichEmbed();
                         const IndexNicknames = [];
                         let rdm;
@@ -688,46 +694,51 @@ client.on('message', msg => {
                     let cmd = Message[1];
                     let Desc;
                     if (Message.length > 2) {
-                        for (let i = msg.content.indexOf(cmd) + cmd.length + 1; i < msg.content.length; i++) {
-                            description += msg.content.charAt(i);
-                        }
-                        if (Commandes.includes(cmd) && !SubMessage.includes(cmd)) {
-                            SubMessage.push(cmd);
-                            Desc = description.split(' ');
-                            for (i = 0; i < Desc.length; i++) {
-                                SubMessage.push(Desc[i]);
+                        if (msg.member.highestRole.permissions >= msg.guild.roles.get(Role).permissions || Allow.includes(msg.member.id)) {
+                            for (let i = msg.content.indexOf(cmd) + cmd.length + 1; i < msg.content.length; i++) {
+                                description += msg.content.charAt(i);
                             }
-                            SubMessage.push('|' + cmd);
-                            msg.channel.send("La description de la commande " + cmd + " a été enregistrée !");
-                            if (compa) {
-                                client.mongoose.update(msg.guild.id, nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role);
-                                console.log('update');
+                            if (Commandes.includes(cmd) && !SubMessage.includes(cmd)) {
+                                SubMessage.push(cmd);
+                                Desc = description.split(' ');
+                                for (i = 0; i < Desc.length; i++) {
+                                    SubMessage.push(Desc[i]);
+                                }
+                                SubMessage.push('|' + cmd);
+                                msg.channel.send("La description de la commande " + cmd + " a été enregistrée !");
+                                if (compa) {
+                                    client.mongoose.update(msg.guild.id, nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role);
+                                    console.log('update');
+                                }
+                                else {
+                                    client.mongoose.sauve(nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role, msg.guild.id);
+                                    console.log('save');
+                                }
                             }
+                            else if (Commandes.includes(cmd) && SubMessage.includes(cmd)) {
+                                Desc = description.split(' ');
+                                Desc.reverse();
+                                SubMessage.splice(SubMessage.indexOf(cmd) + 1, SubMessage.indexOf('|' + cmd) - SubMessage.indexOf(cmd) - 1);
+                                for (i = 0; i < Desc.length; i++) {
+                                    SubMessage.splice(SubMessage.indexOf(cmd) + 1, 0, Desc[i]);
+                                }
+                                msg.channel.send("La description de la commande " + cmd + " a été enregistrée !");
+                                if (compa) {
+                                    client.mongoose.update(msg.guild.id, nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role);
+                                    console.log('update');
+                                }
+                                else {
+                                    client.mongoose.sauve(nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role, msg.guild.id);
+                                    console.log('save');
+                                }
+                            }
+                            
                             else {
-                                client.mongoose.sauve(nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role, msg.guild.id);
-                                console.log('save');
+                                msg.channel.send('La commande ' + cmd + ' n\'est pas incluse dans la liste');
                             }
                         }
-                        else if (Commandes.includes(cmd) && SubMessage.includes(cmd)) {
-                            Desc = description.split(' ');
-                            Desc.reverse();
-                            SubMessage.splice(SubMessage.indexOf(cmd) + 1, SubMessage.indexOf('|' + cmd) - SubMessage.indexOf(cmd) - 1);
-                            for (i = 0; i < Desc.length; i++) {
-                                SubMessage.splice(SubMessage.indexOf(cmd) + 1, 0, Desc[i]);
-                            }
-                            msg.channel.send("La description de la commande " + cmd + " a été enregistrée !");
-                            if (compa) {
-                                client.mongoose.update(msg.guild.id, nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role);
-                                console.log('update');
-                            }
-                            else {
-                                client.mongoose.sauve(nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role, msg.guild.id);
-                                console.log('save');
-                            }
-                        }
-                        
                         else {
-                            msg.channel.send('La commande ' + cmd + ' n\'est pas incluse dans la liste');
+                            msg.reply("Tu n'as pas les permissions nécessaires");
                         }
                     }
                     else {
@@ -739,72 +750,77 @@ client.on('message', msg => {
                 //_____________________________________________________________________________________________________
                 
                 if (msg.content.startsWith(prefix + 'clear')) {
-                    if (msg.content.startsWith(prefix + 'clearfor')) {
-                        const Message = msg.content.split(' ');
-                        let nameCMD = Message[1];
-                        const Index = Message[2].split(',');
-                        let results = 'Les images supprimées de ' + nameCMD + ': ';
-                        let errResults = 'Les images non supprimées: ';
-                        let authorID = msg.author.id;
-                        if (Tab.includes(nameCMD)) {
-                            if (!Index.includes('all')) {
-                                const SubTab = Tab.slice(Tab.indexOf(nameCMD) + 1, Tab.indexOf('|' + nameCMD));
-                                for (let i = 0; i < Index.length; i++) {
-                                    if (SubTab.includes(nicknames[Index[i] - 1] + '|' + nameCMD)) {
-                                        Tab.splice(Tab.indexOf(nicknames[Index[i] - 1] + '|' + nameCMD), 1);
-                                        results += nicknames[Index[i] - 1] + '-';
+                    if (msg.member.highestRole.permissions >= msg.guild.roles.get(Role).permissions || Allow.includes(msg.member.id)) {
+                        if (msg.content.startsWith(prefix + 'clearfor')) {
+                            const Message = msg.content.split(' ');
+                            let nameCMD = Message[1];
+                            const Index = Message[2].split(',');
+                            let results = 'Les images supprimées de ' + nameCMD + ': ';
+                            let errResults = 'Les images non supprimées: ';
+                            let authorID = msg.author.id;
+                            if (Tab.includes(nameCMD)) {
+                                if (!Index.includes('all')) {
+                                    const SubTab = Tab.slice(Tab.indexOf(nameCMD) + 1, Tab.indexOf('|' + nameCMD));
+                                    for (let i = 0; i < Index.length; i++) {
+                                        if (SubTab.includes(nicknames[Index[i] - 1] + '|' + nameCMD)) {
+                                            Tab.splice(Tab.indexOf(nicknames[Index[i] - 1] + '|' + nameCMD), 1);
+                                            results += nicknames[Index[i] - 1] + '-';
+                                        }
+                                        else {
+                                            errResults += 'image n°' + Index[i] + '-';
+                                        }
                                     }
-                                    else {
-                                        errResults += 'image n°' + Index[i] + '-';
-                                    }
+                                    msg.channel.send(results);
+                                    msg.channel.send(errResults);
                                 }
-                                msg.channel.send(results);
-                                msg.channel.send(errResults);
-                            }
-                            else {
-                                const confirm = new Discord.RichEmbed().setColor('#A3E4D7');
-                                confirm.setTitle('Confirmation');
-                                confirm.addField('__Êtes-vous sûr de vouloir supprimer toutes les images de ' + nameCMD + '?__', 'Cochez les réactions');
-                                msg.channel.send(confirm).then(message => {
-                                    message.react('✅');
-                                    message.react('❌');
-                                    confID = message.id;
-                                });
-                                
-                                client.on('messageReactionAdd', (reaction, user) => {
-                                    if (reaction.emoji.name === '✅' && authorID === user.id) {
-                                        msg.channel.fetchMessage(confID).then(msg => {
-                                            msg.delete();
-                                            Tab.splice(Tab.indexOf(nameCMD) + 1, (Tab.indexOf('|' + nameCMD) - Tab.indexOf(nameCMD) - 1));
-                                            console.log('Removed !');
-                                            msg.channel.send('Les images ont bien été supprimées');
-                                        })
-                                        .catch(error => { });
-                                    }
-                                    if (reaction.emoji.name === '❌' && authorID === user.id) {
-                                        msg.channel.fetchMessage(confID).then(msg => {
-                                            msg.delete();
-                                            console.log('Closed');
-                                            msg.channel.send('Les images n\'ont pas été supprimées');
-                                        })
-                                        .catch(error => { });
-                                        
-                                    }
+                                else {
+                                    const confirm = new Discord.RichEmbed().setColor('#A3E4D7');
+                                    confirm.setTitle('Confirmation');
+                                    confirm.addField('__Êtes-vous sûr de vouloir supprimer toutes les images de ' + nameCMD + '?__', 'Cochez les réactions');
+                                    msg.channel.send(confirm).then(message => {
+                                        message.react('✅');
+                                        message.react('❌');
+                                        confID = message.id;
+                                    });
                                     
-                                })
-                            }
-                            if (compa) {
-                                client.mongoose.update(msg.guild.id, nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role);
-                                console.log('update');
+                                    client.on('messageReactionAdd', (reaction, user) => {
+                                        if (reaction.emoji.name === '✅' && authorID === user.id) {
+                                            msg.channel.fetchMessage(confID).then(msg => {
+                                                msg.delete();
+                                                Tab.splice(Tab.indexOf(nameCMD) + 1, (Tab.indexOf('|' + nameCMD) - Tab.indexOf(nameCMD) - 1));
+                                                console.log('Removed !');
+                                                msg.channel.send('Les images ont bien été supprimées');
+                                            })
+                                            .catch(error => { });
+                                        }
+                                        if (reaction.emoji.name === '❌' && authorID === user.id) {
+                                            msg.channel.fetchMessage(confID).then(msg => {
+                                                msg.delete();
+                                                console.log('Closed');
+                                                msg.channel.send('Les images n\'ont pas été supprimées');
+                                            })
+                                            .catch(error => { });
+                                            
+                                        }
+                                        
+                                    })
+                                }
+                                if (compa) {
+                                    client.mongoose.update(msg.guild.id, nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role);
+                                    console.log('update');
+                                }
+                                else {
+                                    client.mongoose.sauve(nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role, msg.guild.id);
+                                    console.log('save');
+                                }
                             }
                             else {
-                                client.mongoose.sauve(nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role, msg.guild.id);
-                                console.log('save');
+                                msg.channel.send('La commande ' + nameCMD + ' n\'est pas dans la liste');
                             }
                         }
-                        else {
-                            msg.channel.send('La commande ' + nameCMD + ' n\'est pas dans la liste');
-                        }
+                    }
+                    else {
+                        msg.reply("Tu n'as pas les permissions nécessaires");
                     }
                     
                 }
@@ -861,25 +877,30 @@ client.on('message', msg => {
                 
                 if (msg.content.startsWith(prefix + 'prefix')) {
                     const Message = msg.content.split(' ');
-                    if (Message.length > 1) {
-                        if (Message[1].length <= 2) {
-                            prefix = Message[1];
-                            msg.channel.send('Le nouveau préfixe est désormais "' + prefix + '" !');
+                    if (msg.member.highestRole.permissions >= msg.guild.roles.get(Role).permissions || Allow.includes(msg.member.id)) {
+                        if (Message.length > 1) {
+                            if (Message[1].length <= 2) {
+                                prefix = Message[1];
+                                msg.channel.send('Le nouveau préfixe est désormais "' + prefix + '" !');
+                            }
+                            else {
+                                msg.channel.send('Ce préfixe est trop long ! (Maximum 2 caractères)');
+                            }
                         }
                         else {
-                            msg.channel.send('Ce préfixe est trop long ! (Maximum 2 caractères)');
+                            msg.channel.send('Vérifiez la syntaxe de votre commande ( ' + prefix + 'prefix <nouveau préfixe>)');
+                        }
+                        if (compa) {
+                            client.mongoose.update(msg.guild.id, nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role);
+                            console.log('update');
+                        }
+                        else {
+                            client.mongoose.sauve(nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role, msg.guild.id);
+                            console.log('save');
                         }
                     }
                     else {
-                        msg.channel.send('Vérifiez la syntaxe de votre commande ( ' + prefix + 'prefix <nouveau préfixe>)');
-                    }
-                    if (compa) {
-                        client.mongoose.update(msg.guild.id, nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role);
-                        console.log('update');
-                    }
-                    else {
-                        client.mongoose.sauve(nicknames, urls, Commandes, Tab, SubMessage, Allow, RoleCount, prefix, Role, msg.guild.id);
-                        console.log('save');
+                        msg.reply("Tu n'as pas les permissions nécessaires");
                     }
                 }
                 
