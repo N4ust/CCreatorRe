@@ -629,7 +629,7 @@ client.on('message', msg => {
                     }
                     if (BotCommandes.includes(cmd)) { }
                     
-                    else if (Commandes.includes(cmd) && Message.length >= 1) {
+                    else if (Commandes.includes(cmd)) {
                         const CommandePerso = new Discord.RichEmbed();
                         const IndexNicknames = [];
                         let rdm;
@@ -678,7 +678,7 @@ client.on('message', msg => {
                         
                         msg.channel.send(CommandePerso);
                     }
-                    else {
+                    else if (Message.length >= 1){
                         msg.channel.send('La commande ' + cmd + ' n\'est pas dans la liste (?listc ou ?listcommand pour afficher vos commandes)')
                     }
                 }
