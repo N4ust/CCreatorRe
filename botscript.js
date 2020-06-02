@@ -321,13 +321,13 @@ client.on('message', msg => {
                 
                 if (msg.content.startsWith(prefix + 'view')) {
                     const Message = msg.content.split(' ');
-                    let Image = new Discord.RichEmbed().setColor('#A3E4D7').setFooter("view").setTimestamp(new Date());
+                    let Image = new Discord.RichEmbed().setColor('#A3E4D7').setTimestamp(new Date());
                     let index = Message[1];
                     if (urls.length > 0) {
                         if (nicknames.includes(index)) {
                             let indexURL = nicknames.indexOf(index);
                             Image.setImage(urls[indexURL]);
-                            Image.setFooter("Image n°" + indexURL);
+                            Image.setFooter("Image n°" + (indexURL+1));
                             Image.setTitle('__L\'image ' + nicknames[indexURL] + ' demandée par ' + msg.author.username + ' __');
                             msg.channel.send(Image);
                         }
@@ -343,7 +343,7 @@ client.on('message', msg => {
                         
                         else if (Number(index) >= 0 && Number(index) <= urls.length) {
                             Image.setFooter("Image n°" + index);
-                            Image.setTitle('__L\'image ' + nicknames[index] + ' demandée par ' + msg.author.username + ' __');
+                            Image.setTitle('__L\'image ' + nicknames[Number(index)-1] + ' demandée par ' + msg.author.username + ' __');
                             Image.setImage(urls[Number(index) - 1]);
                             msg.channel.send(Image);
                             console.log('Postée !index');
@@ -680,7 +680,7 @@ client.on('message', msg => {
                         
                         msg.channel.send(CommandePerso);
                     }
-                    else if (Message.length >= 1){
+                    else if (cmd !== ""){
                         msg.channel.send('La commande ' + cmd + ' n\'est pas dans la liste (?listc ou ?listcommand pour afficher vos commandes)')
                     }
                 }
