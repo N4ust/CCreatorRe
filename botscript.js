@@ -327,6 +327,7 @@ client.on('message', msg => {
                         if (nicknames.includes(index)) {
                             let indexURL = nicknames.indexOf(index);
                             Image.setImage(urls[indexURL]);
+                            Image.setFooter("Image n°" + indexURL);
                             Image.setTitle('__L\'image ' + nicknames[indexURL] + ' demandée par ' + msg.author.username + ' __');
                             msg.channel.send(Image);
                         }
@@ -341,7 +342,8 @@ client.on('message', msg => {
                         }
                         
                         else if (Number(index) >= 0 && Number(index) <= urls.length) {
-                            Image.setTitle('__Image n° ' + index + ' demandée par ' + msg.author.username + '__');
+                            Image.setFooter("Image n°" + index);
+                            Image.setTitle('__L\'image ' + nicknames[index] + ' demandée par ' + msg.author.username + ' __');
                             Image.setImage(urls[Number(index) - 1]);
                             msg.channel.send(Image);
                             console.log('Postée !index');
