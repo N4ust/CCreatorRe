@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { MongoClient } = require('mongodb');
 
 
 var Schema = new mongoose.Schema({
@@ -26,9 +27,11 @@ module.exports = {
             family: 4,
         };
 
-        let MONGODB_URI = process.env.MONGODB_URI;
+        let MONGODB_URI = process.env.MONGODB_URL;
+        
 
         mongoose.connect(MONGODB_URI,dbOptions);
+    
 
         
         mongoose.Promise = global.Promise;
@@ -109,6 +112,19 @@ module.exports = {
                 array.set('RoleCount', c.RoleCount);
                 array.set('prefix', c.prefix);
                 return resolve(array);
+            });
+        });
+    },
+    data2: (x) => {
+        return new Promise((resolve) => {
+            var prefx;
+            const query = Model.findOne({ GuimdID: x});
+            query.exec((err,c) => {
+                if(err){
+                    throw console.log(err);
+                };
+                prefx = c.prefix;
+                return resolve(prefx);
             });
         });
     },
