@@ -118,7 +118,7 @@ module.exports = {
     data2: (x) => {
         return new Promise((resolve) => {
             var prefx;
-            const query = Model.findOne({ GuimdID: x});
+            const query = Model.findOne({ GuildID: x});
             query.exec((err,c) => {
                 if(err){
                     throw console.log(err);
