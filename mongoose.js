@@ -27,7 +27,7 @@ module.exports = {
             family: 4,
         };
 
-        let MONGODB_URI = process.env.MONGODB_URL;
+        let MONGODB_URI = process.env.MONGODB_URI;
         
 
         mongoose.connect(MONGODB_URI,dbOptions);
