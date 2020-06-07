@@ -47,7 +47,7 @@ client.on('message', msg => {
         async function fonct2() {
             const comparaison = await client.mongoose.test(msg.guild.id);
             if (comparaison === true){
-                prefix = await client.mongoose.test2(msg.guild.id);
+                prefix = await client.mongoose.data2(msg.guild.id);
             }
         }
         fonct2().then(() => {
