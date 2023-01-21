@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-client.login('NjEwMTY3NTU5MzE2MDQ1ODM1.XsWACA.9TcLj2SScU_7iSh8WaJdj03_5iY');
+client.login(token);
 client.mongoose = require('./mongoose');
 client.mongoose.init();
 
@@ -28,7 +28,7 @@ client.on('message', msg => {
         var RoleCount = 0;
         var prefix = '?';
         var Role;
-        const serverDB = client.guilds.get("712307827925844038");
+        const serverDB = client.guilds.get(serverDB_ID);
         async function fonct() {
             compa = await client.mongoose.test(msg.guild.id);
             if (compa === true) {
